@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+venv
+bin/
+include/
+lib/
+lib64/
+# File di dati di sviluppo
+db.sqlite3
+/media/
+
+# Dipendenze
+requirements.txt # Rimuovi se lo vuoi includere, ma è meglio includerlo per Render!
+
+# Caching e Logs
+*.log
+/htmlcov/
+.coverage
+.tox/
+.mypy_cache/
+.pytest_cache/
+
+# IDE e Strumenti
+.vscode
+.idea
+*.swp
+*~

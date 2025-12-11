@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titolo_pagina }}{% endblock %}
+
+{% block content %}
+    <a href="{% url 'vetrina_pubblica' %}">← Torna alla Vetrina</a>
+
+    <div class="card" style="margin-top: 20px;">
+        <h1 style="border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            {{ maglia.squadra }} - {{ maglia.giocatore }} ({{ maglia.anno_stagione }})
+        </h1>
+
+        <div style="display: flex; gap: 30px;">
+            <div style="flex: 1;">
+                {% if maglia.foto %}
+                    <img src="{{ maglia.foto.url }}" alt="Foto della maglia" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px;">
+                {% else %}
+                    <div style="width: 100%; height: 400px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                        Nessuna Foto Disponibile
+                    </div>
+                {% endif %}
+
+                {% if is_owner %}
+                    <div style="margin-top: 20px; text-align: center;">
+                        <a 
+                            href="{% url 'modifica_maglia' pk=maglia.pk %}" 
+                            style="color: white; background-color: orange; padding: 8px 15px; border-radius: 5px; text-decoration: none;"
+                        >
+                            ✏️ Modifica Questa Maglia
+                        </a>
+                        <a 
+                            href="{% url 'elimina_maglia' pk=maglia.pk %}" 
+                            style="color: white; background-color: red; padding: 8px 15px; border-radius: 5px; text-decoration: none; margin-left: 10px;"
+                        >
+                            🗑️ Elimina
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div style="flex: 2;">
+                <h2>Dettagli Principali</h2>
+                <ul style="list-style: none; padding: 0;">
+                    <li><strong>Proprietario:</strong> {{ maglia.utente.username }} {% if is_owner %}(Sei tu!){% endif %}</li>
+                    <li><strong>Stagione:</strong> {{ maglia.anno_stagione }}</li>
+                    <li><strong>Visibile in Vetrina:</strong> {{ maglia.visibile_in_vetrina|yesno:"Sì,No" }}</li>
+                    {% if maglia.fonte_esterna_info %}
+                        <li><strong>Riferimento Esterno:</strong> <a href="{{ maglia.fonte_esterna_info }}" target="_blank">Vedi Link</a></li>
+                    {% endif %}
+                </ul>
+
+                {% if is_owner %}
+                    <h2 style="margin-top: 30px; color: #007bff;">Dati Privati (Visibili solo a te)</h2>
+                    <div style="border: 1px dashed #007bff; padding: 15px; border-radius: 5px;">
+                        <p><strong>Valore Stimato:</strong> {{ maglia.valore_stimato|default:"N/A" }} €</p>
+                        <p><strong>Dettagli Acquisto:</strong> {{ maglia.dettagli_acquisto|default:"Nessun dettaglio" }}</p>
+                        <p><strong>Note Personali:</strong> {{ maglia.note_personali|default:"Nessuna nota" }}</p>
+                    </div>
+                {% endif %}
+
+                <p style="margin-top: 30px; font-size: 0.8em; color: #aaa;">
+                    Aggiunta il: {{ maglia.data_creazione|date:"d F Y" }}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titolo_pagina }}{% endblock %}
+
+{% block content %}
+    <h2>Benvenuto nella tua Collezione, {{ user.username }}!</h2>
+    
+    <p>
+        <a href="{% url 'aggiungi_maglia' %}" style="padding: 10px; background-color: green; color: white; text-decoration: none; border-radius: 5px;">
+            ➕ Aggiungi Nuova Maglia
+        </a>
+    </p>
+
+    <h3>Tutte le Tue Maglie ({{ maglie.count }} in totale)</h3>
+
+    {% if maglie %}
+        {% for maglia in maglie %}
+            <div class="card" style="border-left: 5px solid {% if maglia.visibile_in_vetrina %}#28a745{% else %}#dc3545{% endif %};">
+                <h4>{{ maglia.giocatore }} - {{ maglia.squadra }} ({{ maglia.anno_stagione }})</h4>
+                
+                <p>
+                    Stato: 
+                    {% if maglia.visibile_in_vetrina %}
+                        <span style="color: green;">Pubblica in Vetrina</span>
+                    {% else %}
+                        <span style="color: red;">Privata</span>
+                    {% endif %}
+                </p>
+
+                {% if maglia.foto %}
+                    <img src="{{ maglia.foto.url }}" alt="Maglia {{ maglia.giocatore }}" style="width: 100px; height: auto; margin-right: 15px; float: left;">
+                {% endif %}
+
+                <p>Valore stimato: € {{ maglia.valore_stimato|default:"N/D" }}</p>
+                <p>Acquistata: {{ maglia.dettagli_acquisto|default:"N/D"|truncatechars:50 }}</p>
+                
+                <div style="clear: both;"></div>
+
+                <a href="{% url 'dettaglio_maglia' maglia.pk %}" style="margin-right: 10px; color: white; background-color: blue; padding: 5px 10px; border-radius: 3px; text-decoration: none;">Vedi Dettagli</a>
+                <a href="{% url 'modifica_maglia' pk=maglia.pk %}" style="color: white; background-color: orange; padding: 5px 10px; border-radius: 3px; text-decoration: none;">Modifica</a> 
+                <a href="{% url 'elimina_maglia' pk=maglia.pk %}" style="margin-left: 10px; color: white; background-color: red; padding: 5px 10px; border-radius: 3px; text-decoration: none;">Elimina</a>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Non hai ancora aggiunto maglie alla tua collezione. Inizia subito!</p>
+    {% endif %}
+
+{% endblock %}

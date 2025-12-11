@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titolo_pagina }}{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1>👕 {{ titolo_pagina }} 🥇</h1>
+        <p>Esplora le maglie condivise dalla nostra community di collezionisti.</p>
+    </div>
+
+    <div style="margin-bottom: 30px; text-align: center;">
+        <form method="GET" action="{% url 'vetrina_pubblica' %}" style="display: inline-block;">
+            <input 
+                type="text" 
+                name="q" 
+                placeholder="Cerca per squadra, giocatore o stagione..." 
+                value="{{ query|default:'' }}" 
+                style="padding: 10px; width: 300px; border: 2px solid #ccc; border-radius: 4px; font-size: 16px;"
+            >
+            <button 
+                type="submit" 
+                style="padding: 10px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 5px;"
+            >
+                Cerca
+            </button>
+            {% if query %}
+                <a href="{% url 'vetrina_pubblica' %}" style="margin-left: 10px; color: red; text-decoration: none;">
+                    Annulla Ricerca ({{ query }})
+                </a>
+                <p style="margin-top: 10px; font-weight: bold;">Risultati per: "{{ query }}"</p>
+            {% endif %}
+        </form>
+    </div>
+
+    <div style="margin-bottom: 30px; text-align: center; display: flex; justify-content: center; gap: 20px;">
+        <form method="GET" action="{% url 'vetrina_pubblica' %}" id="sort-form">
+            {% if query %}
+                <input type="hidden" name="q" value="{{ query }}">
+            {% endif %}
+            
+            <label for="sort-select" style="font-weight: bold; margin-right: 10px;">Ordina per:</label>
+            <select 
+                name="sort" 
+                id="sort-select" 
+                onchange="this.form.submit()"
+                style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+            >
+                <option value="-anno_stagione" {% if sort_by == '-anno_stagione' %}selected{% endif %}>Anno (Più recente)</option>
+                <option value="anno_stagione" {% if sort_by == 'anno_stagione' %}selected{% endif %}>Anno (Meno recente)</option>
+                <option value="giocatore" {% if sort_by == 'giocatore' %}selected{% endif %}>Giocatore (A-Z)</option>
+                <option value="-giocatore" {% if sort_by == '-giocatore' %}selected{% endif %}>Giocatore (Z-A)</option>
+                <option value="squadra" {% if sort_by == 'squadra' %}selected{% endif %}>Squadra (A-Z)</option>
+                <option value="-data_creazione" {% if sort_by == '-data_creazione' %}selected{% endif %}>Data Aggiunta (Più recente)</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="card-container" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+        
+        {% for maglia in maglie %}
+            <div class="maglia-card" style="
+                border: 1px solid #ddd; 
+                border-radius: 8px; 
+                padding: 15px; 
+                width: 300px; 
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+                text-align: center;
+                transition: transform 0.2s;
+            ">
+                {% if maglia.foto %}
+                    <img src="{{ maglia.foto.url }}" alt="{{ maglia.giocatore }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 6px; margin-bottom: 10px;">
+                {% else %}
+                    <div style="width: 100%; height: 200px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 6px; margin-bottom: 10px;">
+                        Nessuna Foto
+                    </div>
+                {% endif %}
+
+                <h3 style="margin-top: 0;">{{ maglia.squadra }}</h3>
+                <p><strong>Giocatore:</strong> {{ maglia.giocatore }}</p>
+                <p><strong>Stagione:</strong> {{ maglia.anno_stagione }}</p>
+                <p style="font-size: 0.9em; color: #777;">Collezionista: {{ maglia.utente.username }}</p>
+                
+                <a 
+                    href="{% url 'dettaglio_maglia' pk=maglia.pk %}" 
+                    style="display: block; margin-top: 15px; padding: 8px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;"
+                >
+                    Visualizza Dettagli
+                </a>
+            </div>
+        {% empty %}
+            <p>Al momento non ci sono maglie pubbliche in vetrina.</p>
+        {% endfor %}
+    </div>
+
+    {% if maglie.has_other_pages %}
+        <div class="pagination" style="text-align: center; margin-top: 40px; margin-bottom: 20px;">
+            
+            {% if maglie.has_previous %}
+                <a 
+                    href="?page={{ maglie.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+                    style="padding: 10px 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; text-decoration: none; border-radius: 4px; margin-right: 5px;"
+                >
+                    &laquo; Precedente
+                </a>
+            {% endif %}
+            {% if maglie.has_next %}
+                <a 
+                    href="?page={{ maglie.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}"
+                    style="padding: 10px 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; text-decoration: none; border-radius: 4px; margin-left: 5px;"
+                >
+                    Successiva &raquo;
+                </a>
+            {% endif %}
+
+        </div>
+    {% endif %}
+{% endblock %}

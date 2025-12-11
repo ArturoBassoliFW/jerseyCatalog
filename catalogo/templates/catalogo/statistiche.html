@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titolo_pagina }}{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h1>📈 {{ titolo_pagina }}</h1>
+        <p>Un'analisi rapida della tua collezione di maglie.</p>
+    </div>
+    
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: #f9f9f9;">
+        
+        <h2>Riepilogo Generale</h2>
+        <ul style="list-style: none; padding: 0;">
+            <li style="padding: 10px; border-bottom: 1px dotted #ddd;">
+                <strong>Numero Totale di Maglie:</strong> <span style="font-size: 1.2em; color: #007bff;">{{ statistiche.totale_maglie }}</span>
+            </li>
+            <li style="padding: 10px; border-bottom: 1px dotted #ddd;">
+                <strong>Visibili in Vetrina (Pubbliche):</strong> {{ statistiche.maglie_pubbliche }}
+            </li>
+            <li style="padding: 10px;">
+                <strong>Private (Solo Tu):</strong> {{ statistiche.maglie_private }}
+            </li>
+        </ul>
+        
+        {% if statistiche.totale_maglie %}
+            <hr style="margin: 30px 0;">
+            
+            <h2>Storia della Collezione</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 10px; border-bottom: 1px dotted #ddd;">
+                    <strong>Prima Maglia Aggiunta:</strong> 
+                    {% if statistiche.prima_maglia %}
+                        {{ statistiche.prima_maglia.squadra }} ({{ statistiche.prima_maglia.anno_stagione }}) - 
+                        <span style="font-size: 0.9em; color: #777;">Aggiunta il: {{ statistiche.prima_maglia.data_creazione|date:"d M Y" }}</span>
+                    {% else %}
+                        Nessuna.
+                    {% endif %}
+                </li>
+                <li style="padding: 10px;">
+                    <strong>Ultima Maglia Aggiunta:</strong>
+                    {% if statistiche.ultima_maglia %}
+                        {{ statistiche.ultima_maglia.squadra }} ({{ statistiche.ultima_maglia.anno_stagione }}) -
+                        <span style="font-size: 0.9em; color: #777;">Aggiunta il: {{ statistiche.ultima_maglia.data_creazione|date:"d M Y" }}</span>
+                    {% else %}
+                        Nessuna.
+                    {% endif %}
+                </li>
+            </ul>
+            
+            <hr style="margin: 30px 0;">
+
+            <h2>Top 5 Squadre</h2>
+            <ul style="list-style: none; padding: 0;">
+                {% for item in squadre_popolari %}
+                    <li style="padding: 10px; border-bottom: 1px dotted #ddd;">
+                        <strong>{{ item.squadra }}:</strong> {{ item.conteggio }} maglie
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <hr style="margin: 30px 0;">
+
+            <h2>Ripartizione per Stagione</h2>
+            <ul style="list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 20px;">
+                {% for item in anni_stagione %}
+                    <li style="padding: 5px 10px; background-color: #e9ecef; border-radius: 4px; border: 1px solid #ced4da;">
+                        <strong>{{ item.anno_stagione }}:</strong> {{ item.conteggio }}
+                    </li>
+                {% endfor %}
+            </ul>
+
+        {% else %}
+            <p style="text-align: center; color: #dc3545;">Aggiungi la tua prima maglia per vedere le statistiche!</p>
+        {% endif %}
+        
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{% url 'dashboard' %}" style="padding: 10px 20px; background-color: #6c757d; color: white; text-decoration: none; border-radius: 4px;">Torna alla Dashboard</a>
+    </div>
+
+{% endblock %}

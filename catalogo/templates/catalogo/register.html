@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titolo_pagina }}{% endblock %}
+
+{% block content %}
+    <div class="card" style="max-width: 400px; margin: 40px auto; padding: 30px;">
+        <h2>Registrati</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {{ form.as_p }}
+            
+            <button 
+                type="submit" 
+                style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;"
+            >
+                Registrati
+            </button>
+        </form>
+
+        <p style="margin-top: 20px; font-size: 0.9em;">
+            Hai già un account? <a href="{% url 'login' %}">Accedi qui.</a>
+        </p>
+    </div>
+{% endblock %}

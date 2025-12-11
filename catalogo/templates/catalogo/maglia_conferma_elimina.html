@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Conferma Eliminazione{% endblock %}
+
+{% block content %}
+    <a href="{% url 'dashboard' %}">← Torna alla Tua Dashboard</a>
+
+    <div class="card" style="margin-top: 20px;">
+        <h2>Sei sicuro di voler eliminare questa maglia?</h2>
+        
+        <p style="color: red; font-size: 1.1em;">
+            Stai per eliminare definitivamente: 
+            <strong>{{ maglia.squadra }} - {{ maglia.giocatore }} (Stagione: {{ maglia.anno_stagione }})</strong>.
+        </p>
+        
+        <p>Questa azione non può essere annullata.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            <button 
+                type="submit" 
+                style="padding: 10px 20px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 15px;"
+            >
+                Sì, Elimina Definitivamente
+            </button>
+            
+            <a 
+                href="{% url 'dashboard' %}" 
+                style="padding: 10px 20px; background-color: #ccc; color: #333; border-radius: 5px; text-decoration: none;"
+            >
+                Annulla
+            </a>
+        </form>
+    </div>
+{% endblock %}
