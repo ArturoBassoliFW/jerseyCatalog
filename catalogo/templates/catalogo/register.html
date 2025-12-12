@@ -1,26 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}{{ titolo_pagina }}{% endblock %}
+{% block title %}Accesso Utente{% endblock %}
 
 {% block content %}
-    <div class="card" style="max-width: 400px; margin: 40px auto; padding: 30px;">
-        <h2>Registrati</h2>
-        
-        <form method="post">
-            {% csrf_token %}
+    <div class="grid">
+        <div></div> <article> <h2>Accedi al tuo Catalogo</h2>
             
-            {{ form.as_p }}
-            
-            <button 
-                type="submit" 
-                style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;"
-            >
-                Registrati
-            </button>
-        </form>
+            <form method="post">
+                {% csrf_token %}
+                
+                {{ form }}
+                
+                <input type="hidden" name="next" value="{{ next }}" />
+                
+                <button type="submit" class="contrast">
+                    Login
+                </button>
+            </form>
 
-        <p style="margin-top: 20px; font-size: 0.9em;">
-            Hai già un account? <a href="{% url 'login' %}">Accedi qui.</a>
-        </p>
-    </div>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                <a href="{% url 'register' %}" class="secondary">Non hai un account? Registrati qui.</a>
+            </p>
+        </article>
+        
+        <div></div> </div>
 {% endblock %}

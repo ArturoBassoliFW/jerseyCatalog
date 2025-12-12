@@ -5,32 +5,32 @@
 {% block content %}
     <a href="{% url 'dashboard' %}">← Torna alla Tua Dashboard</a>
 
-    <div class="card" style="margin-top: 20px;">
-        <h2>Sei sicuro di voler eliminare questa maglia?</h2>
-        
-        <p style="color: red; font-size: 1.1em;">
-            Stai per eliminare definitivamente: 
-            <strong>{{ maglia.squadra }} - {{ maglia.giocatore }} (Stagione: {{ maglia.anno_stagione }})</strong>.
-        </p>
+    <article class="danger" style="margin-top: 20px;">
+        <hgroup>
+            <h2>Sei sicuro di voler eliminare questa maglia?</h2>
+            <p>
+                Stai per eliminare definitivamente: 
+                <strong>{{ maglia.squadra }} - {{ maglia.giocatore }} (Stagione: {{ maglia.anno_stagione }})</strong>.
+            </p>
+        </hgroup>
         
         <p>Questa azione non può essere annullata.</p>
 
-        <form method="post">
-            {% csrf_token %}
-            
-            <button 
-                type="submit" 
-                style="padding: 10px 20px; background-color: red; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 15px;"
-            >
-                Sì, Elimina Definitivamente
-            </button>
+        <footer>
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="danger">
+                    Sì, Elimina Definitivamente
+                </button>
+            </form>
             
             <a 
                 href="{% url 'dashboard' %}" 
-                style="padding: 10px 20px; background-color: #ccc; color: #333; border-radius: 5px; text-decoration: none;"
+                role="button"
+                class="secondary"
             >
                 Annulla
             </a>
-        </form>
-    </div>
+        </footer>
+    </article>
 {% endblock %}

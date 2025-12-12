@@ -3,45 +3,49 @@
 {% block title %}{{ titolo_pagina }}{% endblock %}
 
 {% block content %}
-    <h2>Benvenuto nella tua Collezione, {{ user.username }}!</h2>
+    <h1>Benvenuto nella tua Collezione, {{ user.username }}!</h1>
     
     <p>
-        <a href="{% url 'aggiungi_maglia' %}" style="padding: 10px; background-color: green; color: white; text-decoration: none; border-radius: 5px;">
+        <a href="{% url 'aggiungi_maglia' %}" role="button" class="secondary">
             ➕ Aggiungi Nuova Maglia
         </a>
     </p>
 
-    <h3>Tutte le Tue Maglie ({{ maglie.count }} in totale)</h3>
+    <hgroup>
+        <h3>Tutte le Tue Maglie</h3>
+        <p>({{ maglie.count }} in totale)</p>
+    </hgroup>
 
     {% if maglie %}
-        {% for maglia in maglie %}
-            <div class="card" style="border-left: 5px solid {% if maglia.visibile_in_vetrina %}#28a745{% else %}#dc3545{% endif %};">
-                <h4>{{ maglia.giocatore }} - {{ maglia.squadra }} ({{ maglia.anno_stagione }})</h4>
-                
-                <p>
-                    Stato: 
-                    {% if maglia.visibile_in_vetrina %}
-                        <span style="color: green;">Pubblica in Vetrina</span>
-                    {% else %}
-                        <span style="color: red;">Privata</span>
+        <div class="grid">
+            {% for maglia in maglie %}
+                <article 
+                    style="border-left: 5px solid {% if maglia.visibile_in_vetrina %}var(--pico-color-success){% else %}var(--pico-color-danger){% endif %};"
+                >
+                    <h5 style="margin-bottom: 0;">{{ maglia.squadra }}</h5>
+                    <h4>{{ maglia.giocatore }} ({{ maglia.anno_stagione }})</h4>
+                    
+                    {% if maglia.foto %}
+                        <img src="{{ maglia.foto.url }}" alt="Maglia {{ maglia.giocatore }}" style="width: 100%; max-height: 200px; object-fit: cover; border-radius: 4px; margin-bottom: 10px;">
                     {% endif %}
-                </p>
 
-                {% if maglia.foto %}
-                    <img src="{{ maglia.foto.url }}" alt="Maglia {{ maglia.giocatore }}" style="width: 100px; height: auto; margin-right: 15px; float: left;">
-                {% endif %}
+                    <p>
+                        Stato: 
+                        {% if maglia.visibile_in_vetrina %}
+                            <mark style="background-color: var(--pico-color-success);">Pubblica in Vetrina</mark>
+                        {% else %}
+                            <mark style="background-color: var(--pico-color-danger);">Privata</mark>
+                        {% endif %}
+                    </p>
 
-                <p>Valore stimato: € {{ maglia.valore_stimato|default:"N/D" }}</p>
-                <p>Acquistata: {{ maglia.dettagli_acquisto|default:"N/D"|truncatechars:50 }}</p>
-                
-                <div style="clear: both;"></div>
-
-                <a href="{% url 'dettaglio_maglia' maglia.pk %}" style="margin-right: 10px; color: white; background-color: blue; padding: 5px 10px; border-radius: 3px; text-decoration: none;">Vedi Dettagli</a>
-                <a href="{% url 'modifica_maglia' pk=maglia.pk %}" style="color: white; background-color: orange; padding: 5px 10px; border-radius: 3px; text-decoration: none;">Modifica</a> 
-                <a href="{% url 'elimina_maglia' pk=maglia.pk %}" style="margin-left: 10px; color: white; background-color: red; padding: 5px 10px; border-radius: 3px; text-decoration: none;">Elimina</a>
-
-            </div>
-        {% endfor %}
+                    <footer>
+                        <a href="{% url 'dettaglio_maglia' maglia.pk %}" role="button" class="contrast outline">Dettagli</a>
+                        <a href="{% url 'modifica_maglia' pk=maglia.pk %}" role="button" class="secondary outline">Modifica</a> 
+                        <a href="{% url 'elimina_maglia' pk=maglia.pk %}" role="button" class="danger outline">Elimina</a>
+                    </footer>
+                </article>
+            {% endfor %}
+        </div>
     {% else %}
         <p>Non hai ancora aggiunto maglie alla tua collezione. Inizia subito!</p>
     {% endif %}
