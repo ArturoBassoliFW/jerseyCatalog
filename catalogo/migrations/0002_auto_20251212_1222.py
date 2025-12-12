@@ -28,6 +28,21 @@ def create_initial_superuser(apps, schema_editor):
         user.save()
         print(f"Permessi di Superuser e Staff aggiornati per {USERNAME}.")
         
+# 🚨 NUOVA FUNZIONE: per rimuovere l'utente se si torna indietro con la migrazione
+def reverse_initial_superuser(apps, schema_editor):
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    USERNAME = 'Admin' 
+    
+    # Rimuoviamo l'utente creato solo se non è un utente importante
+    try:
+        user = User.objects.get(username=USERNAME)
+        # ⚠️ NON ESEGUIRE QUESTA PARTE SE L'UTENTE HA DATI IMPORTANTI
+        # User.objects.filter(username=USERNAME).delete() 
+        print(f"La rimozione dell'utente {USERNAME} è stata saltata per sicurezza.")
+    except User.DoesNotExist:
+        pass
+
 
 class Migration(migrations.Migration):
 
@@ -36,5 +51,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_initial_superuser),
+        # 🚨 AGGIUNGI L'ARGOMENTO reverse_code 🚨
+        migrations.RunPython(create_initial_superuser, reverse_initial_superuser),
     ]
