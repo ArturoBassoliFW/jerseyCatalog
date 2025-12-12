@@ -10,51 +10,172 @@
     />
     
     <style>
+        :root {
+            --brand-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-light: rgba(46, 213, 115, 0.1);
+            --danger-light: rgba(255, 71, 87, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
         .container { 
             max-width: 1200px; 
-            margin-inline: auto; /* Centra il container */
+            margin-inline: auto;
+            padding-inline: 1rem;
         }
-        /* Rimuove lo sfondo scuro della navigazione, lasciando quello di Pico */
-        header { 
-            background-color: var(--pico-background-color); 
-            color: var(--pico-color); 
-            padding: 0; /* Pico gestisce il padding */
+
+        /* Header con glassmorphism */
+        header {
+            background: var(--brand-gradient);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
         }
+
+        header nav {
+            padding: 0.75rem 0;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        header a:hover {
+            opacity: 0.8;
+        }
+
+        header h2 {
+            color: white;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        header ul li a[role="button"],
+        header ul li button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        header ul li a[role="button"]:hover,
+        header ul li button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Main content con animazione */
         main {
-            padding-top: 20px;
-            padding-bottom: 50px;
+            padding-top: 2rem;
+            padding-bottom: 3rem;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Alert messages migliorati */
+        [role="alert"] {
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .message-success {
+            background: var(--success-light);
+            border-left-color: var(--pico-color-success);
+        }
+
+        .message-error {
+            background: var(--danger-light);
+            border-left-color: var(--pico-color-danger);
+        }
+
+        /* Footer elegante */
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid var(--pico-muted-border-color);
+            opacity: 0.7;
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            header nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            header nav ul li {
+                width: 100%;
+            }
+
+            header nav ul li a[role="button"],
+            header nav ul li button {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+
+            header h2 {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: background-color 0.2s ease;
         }
     </style>
 </head>
 <body>
-    <header class="container">
-        <nav>
+    <header>
+        <nav class="container">
             <hgroup>
-                <a href="{% url 'vetrina_pubblica' %}" style="text-decoration: none;">
-                    <h2 style="margin: 0;">⚽ Collezione Maglie</h2>
+                <a href="{% url 'vetrina_pubblica' %}">
+                    <h2>⚽ Collezione Maglie</h2>
                 </a>
             </hgroup>
             <ul>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
                     <li><a href="{% url 'statistiche_collezione' %}">Statistiche 📈</a></li>
-                    <li><a href="{% url 'aggiungi_maglia' %}" role="button" class="secondary">Aggiungi Maglia</a></li>
+                    <li><a href="{% url 'aggiungi_maglia' %}" role="button">+ Aggiungi</a></li>
                     <li>
                         <form method="post" action="{% url 'logout' %}" style="display: inline;">
                             {% csrf_token %}
-                            <button type="submit" class="secondary">
+                            <button type="submit">
                                 Logout ({{ user.username }})
                             </button>
                         </form>
                     </li>
                 {% else %}
-                    <li><a href="{% url 'register' %}" role="button" class="secondary">Registrati</a></li>
-                    <li><a href="{% url 'login' %}" role="button" class="contrast">Login</a></li>
+                    <li><a href="{% url 'register' %}" role="button">Registrati</a></li>
+                    <li><a href="{% url 'login' %}" role="button">Login</a></li>
                 {% endif %}
             </ul>
         </nav>
     </header>
-
+    
     <main class="container">
         {% if messages %}
             {% for message in messages %}
@@ -63,13 +184,12 @@
                 </div>
             {% endfor %}
         {% endif %}
-
         {% block content %}{% endblock %}
     </main>
-
+    
     <footer class="container">
-        <small style="text-align: center; display: block;">
-            &copy; 2025 Collezione Maglie App
+        <small>
+            &copy; 2025 Collezione Maglie App · Made with ❤️ for collectors
         </small>
     </footer>
 </body>

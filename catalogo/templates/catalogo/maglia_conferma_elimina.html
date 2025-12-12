@@ -1,36 +1,161 @@
 {% extends "base.html" %}
-
 {% block title %}Conferma Eliminazione{% endblock %}
-
 {% block content %}
-    <a href="{% url 'dashboard' %}">← Torna alla Tua Dashboard</a>
+    <style>
+        .delete-container {
+            max-width: 600px;
+            margin: 2rem auto;
+        }
 
-    <article class="danger" style="margin-top: 20px;">
-        <hgroup>
-            <h2>Sei sicuro di voler eliminare questa maglia?</h2>
-            <p>
-                Stai per eliminare definitivamente: 
-                <strong>{{ maglia.squadra }} - {{ maglia.giocatore }} (Stagione: {{ maglia.anno_stagione }})</strong>.
-            </p>
-        </hgroup>
-        
-        <p>Questa azione non può essere annullata.</p>
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--pico-muted-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
 
-        <footer>
-            <form method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="danger">
-                    Sì, Elimina Definitivamente
-                </button>
-            </form>
-            
-            <a 
-                href="{% url 'dashboard' %}" 
-                role="button"
-                class="secondary"
-            >
-                Annulla
-            </a>
-        </footer>
-    </article>
+        .delete-card {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 3px solid var(--pico-color-danger);
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .delete-header {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .delete-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .delete-header h2 {
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .delete-body {
+            padding: 2rem;
+            background: var(--pico-card-background-color);
+        }
+
+        .jersey-info {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.1) 0%, rgba(255, 99, 72, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .jersey-info strong {
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning-text {
+            text-align: center;
+            font-weight: 600;
+            color: var(--pico-color-danger);
+            margin: 1.5rem 0;
+            font-size: 1.05rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-buttons button,
+        .action-buttons a {
+            flex: 1;
+            padding: 0.875rem;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+            border: none;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 576px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .delete-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+
+    <div class="delete-container">
+        <a href="{% url 'dashboard' %}" class="back-link">
+            ← Torna alla Dashboard
+        </a>
+
+        <article class="delete-card">
+            <div class="delete-header">
+                <div class="delete-icon">⚠️</div>
+                <h2>Conferma Eliminazione</h2>
+                <p>Questa azione è irreversibile</p>
+            </div>
+
+            <div class="delete-body">
+                <p style="text-align: center; font-size: 1.05rem;">
+                    Stai per eliminare definitivamente:
+                </p>
+
+                <div class="jersey-info">
+                    <strong>{{ maglia.squadra }}</strong>
+                    <span>{{ maglia.giocatore }}</span>
+                    <br>
+                    <small>Stagione: {{ maglia.anno_stagione }}</small>
+                </div>
+
+                <p class="warning-text">
+                    ⛔ Tutti i dati associati verranno persi per sempre
+                </p>
+
+                <div class="action-buttons">
+                    <a href="{% url 'dashboard' %}" role="button" class="secondary">
+                        ← Annulla
+                    </a>
+                    <form method="post" style="flex: 1;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-delete">
+                            🗑️ Elimina Definitivamente
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </div>
 {% endblock %}

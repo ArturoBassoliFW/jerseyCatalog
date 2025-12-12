@@ -1,47 +1,206 @@
 {% extends "base.html" %}
-
 {% block title %}{{ titolo_pagina }}{% endblock %}
-
 {% block content %}
-    <a href="{% url 'dashboard' %}">← Torna alla Tua Dashboard</a>
+    <style>
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
 
-    <article style="margin-top: 20px;">
-        <h2>{{ titolo_pagina }}</h2>
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--pico-muted-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
 
-        {% if messages %}
-            {% for message in messages %}
-                <div role="alert" class="secondary">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        .form-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            {% for field in form %}
-                <label for="{{ field.id_for_label }}">
-                    {{ field.label }}
-                    {% if field.field.required %}
-                        <small style="color: red;">*</small>
-                    {% endif %}
-                </label>
-                {{ field }}
-                {% if field.errors %}
-                    <small style="color: var(--pico-color-danger);">{{ field.errors }}</small>
+        .form-header {
+            background: var(--brand-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            color: white;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .form-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--pico-color);
+        }
+
+        .form-group label small {
+            color: var(--pico-color-danger);
+            font-weight: 700;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid var(--pico-muted-border-color);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .help-text {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--pico-muted-color);
+        }
+
+        .error-text {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--pico-color-danger);
+            font-weight: 500;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            font-size: 0.9rem;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--brand-gradient);
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-top: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--pico-card-background-color);
+            border-radius: 8px;
+            border: 2px solid var(--pico-muted-border-color);
+        }
+
+        @media (max-width: 576px) {
+            .form-body {
+                padding: 1.5rem;
+            }
+
+            .form-header {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+
+    <div class="form-container">
+        <a href="{% url 'dashboard' %}" class="back-link">
+            ← Torna alla Dashboard
+        </a>
+
+        <article class="form-card">
+            <div class="form-header">
+                <h2>{{ titolo_pagina }}</h2>
+            </div>
+
+            <div class="form-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div role="alert" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px; background: rgba(102, 126, 234, 0.1); border-left: 4px solid #667eea;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
                 {% endif %}
-                {% if field.help_text %}
-                    <small style="color: var(--pico-muted-color);">{{ field.help_text }}</small>
-                {% endif %}
-            {% endfor %}
 
-            <button 
-                type="submit" 
-                class="contrast"
-                style="margin-top: 20px;"
-            >
-                {{ action }} Maglia
-            </button>
-        </form>
-    </article>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}
+                                    <small>*</small>
+                                {% endif %}
+                            </label>
+                            
+                            {% if field.field.widget.input_type == 'checkbox' %}
+                                <div class="checkbox-wrapper">
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}" style="margin: 0 0 0 0.5rem; font-weight: 400;">
+                                        {{ field.label }}
+                                    </label>
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            
+                            {% if field.errors %}
+                                <span class="error-text">{{ field.errors.0 }}</span>
+                            {% endif %}
+                            
+                            {% if field.help_text %}
+                                <span class="help-text">{{ field.help_text }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="submit-button">
+                        💾 {{ action }} Maglia
+                    </button>
+                </form>
+            </div>
+        </article>
+    </div>
 {% endblock %}

@@ -1,27 +1,108 @@
 {% extends "base.html" %}
-
 {% block title %}Accesso Utente{% endblock %}
-
 {% block content %}
-    <div class="grid">
-        <div></div> <article> <h2>Accedi al tuo Catalogo</h2>
+    <style>
+        .auth-container {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-card {
+            max-width: 450px;
+            width: 100%;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header h2 {
+            margin-bottom: 0.5rem;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .auth-header p {
+            color: var(--pico-muted-color);
+            font-size: 0.95rem;
+        }
+
+        .auth-form {
+            margin-top: 1.5rem;
+        }
+
+        .auth-form input {
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+
+        .auth-form button {
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 1rem;
+            background: var(--brand-gradient);
+            border: none;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--pico-muted-border-color);
+        }
+
+        .auth-footer a {
+            color: var(--pico-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        @media (max-width: 576px) {
+            .auth-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+
+    <div class="auth-container">
+        <article class="auth-card">
+            <div class="auth-header">
+                <h2>🔐 Bentornato!</h2>
+                <p>Accedi per gestire la tua collezione</p>
+            </div>
             
-            <form method="post">
+            <form method="post" class="auth-form">
                 {% csrf_token %}
-                
                 {{ form }}
-                
                 <input type="hidden" name="next" value="{{ next }}" />
-                
-                <button type="submit" class="contrast">
-                    Login
+                <button type="submit">
+                    Accedi
                 </button>
             </form>
-
-            <p style="margin-top: 20px; font-size: 0.9em;">
-                <a href="{% url 'register' %}" class="secondary">Non hai un account? Registrati qui.</a>
-            </p>
+            
+            <div class="auth-footer">
+                <small>
+                    Non hai un account? 
+                    <a href="{% url 'register' %}">Registrati gratuitamente</a>
+                </small>
+            </div>
         </article>
-        
-        <div></div> </div>
+    </div>
 {% endblock %}

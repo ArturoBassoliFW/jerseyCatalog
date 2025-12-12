@@ -1,74 +1,289 @@
 {% extends "base.html" %}
-
 {% block title %}{{ titolo_pagina }}{% endblock %}
-
 {% block content %}
-    <a href="{% url 'vetrina_pubblica' %}">← Torna alla Vetrina</a>
+    <style>
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--pico-muted-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
 
-    <article style="margin-top: 20px;">
-        <hgroup>
-            <h1>{{ maglia.squadra }} - {{ maglia.giocatore }}</h1>
-            <h2>({{ maglia.anno_stagione }})</h2>
-        </hgroup>
+        .back-link:hover {
+            color: var(--pico-color);
+        }
 
-        <div class="grid">
-            <div>
-                {% if maglia.foto %}
-                    <img src="{{ maglia.foto.url }}" alt="Foto della maglia" style="width: 100%; object-fit: contain; border-radius: 8px;">
-                {% else %}
-                    <div style="width: 100%; height: 300px; background-color: var(--pico-muted-border-color); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
-                        Nessuna Foto Disponibile
-                    </div>
-                {% endif %}
+        .detail-card {
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
 
-                {% if is_owner %}
-                    <footer style="margin-top: 20px;">
-                        <a 
-                            href="{% url 'modifica_maglia' pk=maglia.pk %}" 
-                            role="button"
-                            class="secondary"
-                        >
-                            ✏️ Modifica
-                        </a>
-                        <a 
-                            href="{% url 'elimina_maglia' pk=maglia.pk %}" 
-                            role="button"
-                            class="danger"
-                        >
-                            🗑️ Elimina
-                        </a>
-                    </footer>
-                {% endif %}
-            </div>
+        .detail-header {
+            background: var(--brand-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
 
-            <div>
-                <section>
-                    <h3>Dettagli Principali</h3>
-                    <ul>
-                        <li><strong>Proprietario:</strong> {{ maglia.utente.username }} {% if is_owner %}(Sei tu!){% endif %}</li>
-                        <li><strong>Stagione:</strong> {{ maglia.anno_stagione }}</li>
-                        <li><strong>Visibile in Vetrina:</strong> <mark>{{ maglia.visibile_in_vetrina|yesno:"Sì,No" }}</mark></li>
-                        {% if maglia.fonte_esterna_info %}
-                            <li><strong>Riferimento Esterno:</strong> <a href="{{ maglia.fonte_esterna_info }}" target="_blank">Vedi Link</a></li>
+        .detail-header h1 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .detail-header h2 {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            font-size: 1.25rem;
+        }
+
+        .detail-body {
+            padding: 0;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .image-section {
+            position: relative;
+            background: var(--pico-card-background-color);
+            padding: 2rem;
+        }
+
+        .jersey-image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--pico-muted-border-color);
+        }
+
+        .jersey-image-wrapper img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .no-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--pico-muted-color);
+        }
+
+        .info-section {
+            padding: 2rem;
+        }
+
+        .info-block {
+            margin-bottom: 2rem;
+        }
+
+        .info-block h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--pico-muted-border-color);
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .info-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--pico-muted-border-color);
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--pico-muted-color);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .private-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .private-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .owner-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .owner-actions a {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .timestamp {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--pico-muted-border-color);
+            font-size: 0.85rem;
+            color: var(--pico-muted-color);
+        }
+
+        @media (max-width: 992px) {
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .detail-header {
+                padding: 1.5rem;
+            }
+
+            .image-section,
+            .info-section {
+                padding: 1.5rem;
+            }
+
+            .owner-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+    <a href="{% url 'vetrina_pubblica' %}" class="back-link">
+        ← Torna alla Vetrina
+    </a>
+
+    <article class="detail-card">
+        <div class="detail-header">
+            <h1>{{ maglia.squadra }}</h1>
+            <h2>{{ maglia.giocatore }} · {{ maglia.anno_stagione }}</h2>
+        </div>
+
+        <div class="detail-body">
+            <div class="detail-grid">
+                <div class="image-section">
+                    <div class="jersey-image-wrapper">
+                        {% if maglia.foto %}
+                            <img src="{{ maglia.foto.url }}" alt="{{ maglia.giocatore }}">
+                        {% else %}
+                            <div class="no-image">📷</div>
                         {% endif %}
-                    </ul>
-                </section>
+                    </div>
 
-                {% if is_owner %}
-                    <section style="margin-top: 30px;">
-                        <h3 class="contrast">Dati Privati (Visibili solo a te)</h3>
-                        <details open>
-                            <summary role="button">Mostra Dati Privati</summary>
-                            <p><strong>Valore Stimato:</strong> <strong>{{ maglia.valore_stimato|default:"N/A" }} €</strong></p>
-                            <p><strong>Dettagli Acquisto:</strong> {{ maglia.dettagli_acquisto|default:"Nessun dettaglio" }}</p>
-                            <p><strong>Note Personali:</strong> {{ maglia.note_personali|default:"Nessuna nota" }}</p>
-                        </details>
-                    </section>
-                {% endif %}
+                    {% if is_owner %}
+                        <div class="owner-actions">
+                            <a href="{% url 'modifica_maglia' pk=maglia.pk %}" role="button" class="secondary">
+                                ✏️ Modifica
+                            </a>
+                            <a href="{% url 'elimina_maglia' pk=maglia.pk %}" role="button" class="outline" style="color: var(--pico-color-danger); border-color: var(--pico-color-danger);">
+                                🗑️ Elimina
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
 
-                <p style="margin-top: 30px; font-size: 0.8em; color: var(--pico-muted-color);">
-                    Aggiunta il: {{ maglia.data_creazione|date:"d F Y" }}
-                </p>
+                <div class="info-section">
+                    <div class="info-block">
+                        <h3>📋 Informazioni</h3>
+                        <ul class="info-list">
+                            <li>
+                                <span class="info-label">Proprietario</span>
+                                <span class="info-value">
+                                    {{ maglia.utente.username }}
+                                    {% if is_owner %}<mark>Tu</mark>{% endif %}
+                                </span>
+                            </li>
+                            <li>
+                                <span class="info-label">Stagione</span>
+                                <span class="info-value">{{ maglia.anno_stagione }}</span>
+                            </li>
+                            <li>
+                                <span class="info-label">Visibilità</span>
+                                <span class="info-value">
+                                    {% if maglia.visibile_in_vetrina %}
+                                        <mark style="background: var(--pico-color-success);">🌐 Pubblica</mark>
+                                    {% else %}
+                                        <mark style="background: var(--pico-color-danger);">🔒 Privata</mark>
+                                    {% endif %}
+                                </span>
+                            </li>
+                            {% if maglia.fonte_esterna_info %}
+                                <li>
+                                    <span class="info-label">Link Esterno</span>
+                                    <span class="info-value">
+                                        <a href="{{ maglia.fonte_esterna_info }}" target="_blank">Apri 🔗</a>
+                                    </span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    {% if is_owner %}
+                        <div class="private-section">
+                            <h3>🔐 Dati Privati</h3>
+                            <ul class="info-list">
+                                <li>
+                                    <span class="info-label">Valore Stimato</span>
+                                    <span class="info-value">{{ maglia.valore_stimato|default:"N/A" }} €</span>
+                                </li>
+                            </ul>
+                            <div style="margin-top: 1rem;">
+                                <p style="margin-bottom: 0.5rem;"><strong>Dettagli Acquisto:</strong></p>
+                                <p style="font-size: 0.9rem;">{{ maglia.dettagli_acquisto|default:"Nessun dettaglio disponibile" }}</p>
+                            </div>
+                            <div style="margin-top: 1rem;">
+                                <p style="margin-bottom: 0.5rem;"><strong>Note Personali:</strong></p>
+                                <p style="font-size: 0.9rem;">{{ maglia.note_personali|default:"Nessuna nota" }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="timestamp">
+                        📅 Aggiunta il {{ maglia.data_creazione|date:"d F Y" }}
+                    </div>
+                </div>
             </div>
         </div>
     </article>

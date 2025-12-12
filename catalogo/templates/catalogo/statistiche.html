@@ -1,94 +1,353 @@
 {% extends "base.html" %}
-
 {% block title %}{{ titolo_pagina }}{% endblock %}
-
 {% block content %}
-    <header style="text-align: center; margin-bottom: 40px;">
+    <style>
+        .stats-header {
+            text-align: center;
+            padding: 2rem 0 3rem;
+            background: var(--brand-gradient);
+            margin: -2rem -1rem 3rem;
+            border-radius: 0 0 24px 24px;
+            color: white;
+        }
+
+        .stats-header h1 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .stats-header p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stats-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--pico-card-background-color);
+            border-radius: 16px;
+            padding: 1.75rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--pico-muted-color);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 0;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-value.success {
+            color: var(--pico-color-success);
+            background: none;
+            -webkit-text-fill-color: var(--pico-color-success);
+        }
+
+        .stat-value.danger {
+            color: var(--pico-color-danger);
+            background: none;
+            -webkit-text-fill-color: var(--pico-color-danger);
+        }
+
+        .section-card {
+            background: var(--pico-card-background-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--pico-muted-border-color);
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .timeline-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .timeline-item {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-item strong {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .ranking-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            counter-reset: ranking;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: var(--pico-card-background-color);
+            border-radius: 8px;
+            border: 2px solid var(--pico-muted-border-color);
+            transition: border-color 0.2s;
+            counter-increment: ranking;
+        }
+
+        .ranking-item:hover {
+            border-color: #667eea;
+        }
+
+        .ranking-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--brand-gradient);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .ranking-number::before {
+            content: counter(ranking);
+        }
+
+        .ranking-content {
+            flex: 1;
+        }
+
+        .ranking-count {
+            padding: 0.35rem 0.85rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .season-badge {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 12px;
+            transition: transform 0.2s;
+        }
+
+        .season-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .season-year {
+            display: block;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .season-count {
+            font-size: 0.85rem;
+            color: var(--pico-muted-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-radius: 16px;
+            border: 2px dashed var(--pico-muted-border-color);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .stats-header {
+                margin: -2rem -1rem 2rem;
+                padding: 1.5rem 1rem 2rem;
+            }
+
+            .section-card {
+                padding: 1.5rem;
+            }
+
+            .season-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+
+    <div class="stats-header">
         <h1>📈 {{ titolo_pagina }}</h1>
-        <p>Un'analisi rapida della tua collezione di maglie.</p>
-    </header>
+        <p>Un'analisi completa della tua collezione</p>
+    </div>
     
-    <article style="max-width: 900px; margin: 0 auto;">
-        
-        <h2>Riepilogo Generale</h2>
-        
-        <div class="grid">
-            <section style="text-align: center;">
-                <p style="margin-bottom: 0;"><strong>Maglie Totali</strong></p>
-                <h3 class="contrast" style="margin-top: 0;">{{ statistiche.totale_maglie }}</h3>
-            </section>
-            <section style="text-align: center;">
-                <p style="margin-bottom: 0;"><strong>In Vetrina (Pubbliche)</strong></p>
-                <h4 style="margin-top: 0; color: var(--pico-color-success);">{{ statistiche.maglie_pubbliche }}</h4>
-            </section>
-            <section style="text-align: center;">
-                <p style="margin-bottom: 0;"><strong>Private</strong></p>
-                <h4 style="margin-top: 0; color: var(--pico-color-danger);">{{ statistiche.maglie_private }}</h4>
-            </section>
+    <div class="stats-container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">⚽</div>
+                <div class="stat-label">Maglie Totali</div>
+                <h3 class="stat-value">{{ statistiche.totale_maglie }}</h3>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🌐</div>
+                <div class="stat-label">Pubbliche</div>
+                <h4 class="stat-value success">{{ statistiche.maglie_pubbliche }}</h4>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🔒</div>
+                <div class="stat-label">Private</div>
+                <h4 class="stat-value danger">{{ statistiche.maglie_private }}</h4>
+            </div>
         </div>
         
         {% if statistiche.totale_maglie %}
-            
-            <hr>
-            
-            <details>
-                <summary role="button">Storia della Collezione</summary>
-                <ul>
-                    <li>
-                        <strong>Prima Maglia Aggiunta:</strong> 
-                        {% if statistiche.prima_maglia %}
-                            {{ statistiche.prima_maglia.squadra }} ({{ statistiche.prima_maglia.anno_stagione }}) - 
-                            <small>Aggiunta il: {{ statistiche.prima_maglia.data_creazione|date:"d M Y" }}</small>
-                        {% else %}
-                            Nessuna.
-                        {% endif %}
-                    </li>
-                    <li>
-                        <strong>Ultima Maglia Aggiunta:</strong>
-                        {% if statistiche.ultima_maglia %}
-                            {{ statistiche.ultima_maglia.squadra }} ({{ statistiche.ultima_maglia.anno_stagione }}) -
-                            <small>Aggiunta il: {{ statistiche.ultima_maglia.data_creazione|date:"d M Y" }}</small>
-                        {% else %}
-                            Nessuna.
-                        {% endif %}
-                    </li>
+            <div class="section-card">
+                <div class="section-title">
+                    <span style="font-size: 1.75rem;">📅</span>
+                    <h2>Storia della Collezione</h2>
+                </div>
+                <ul class="timeline-list">
+                    {% if statistiche.prima_maglia %}
+                        <li class="timeline-item">
+                            <strong>Prima Maglia</strong>
+                            {{ statistiche.prima_maglia.squadra }} - {{ statistiche.prima_maglia.giocatore }} ({{ statistiche.prima_maglia.anno_stagione }})
+                            <br>
+                            <small style="color: var(--pico-muted-color);">
+                                📅 {{ statistiche.prima_maglia.data_creazione|date:"d F Y" }}
+                            </small>
+                        </li>
+                    {% endif %}
+                    
+                    {% if statistiche.ultima_maglia %}
+                        <li class="timeline-item">
+                            <strong>Ultima Maglia</strong>
+                            {{ statistiche.ultima_maglia.squadra }} - {{ statistiche.ultima_maglia.giocatore }} ({{ statistiche.ultima_maglia.anno_stagione }})
+                            <br>
+                            <small style="color: var(--pico-muted-color);">
+                                📅 {{ statistiche.ultima_maglia.data_creazione|date:"d F Y" }}
+                            </small>
+                        </li>
+                    {% endif %}
                 </ul>
-            </details>
+            </div>
             
-            <hr>
-
-            <section>
-                <h2>Top 5 Squadre</h2>
-                <ol>
+            <div class="section-card">
+                <div class="section-title">
+                    <span style="font-size: 1.75rem;">🏆</span>
+                    <h2>Top 5 Squadre</h2>
+                </div>
+                <ol class="ranking-list">
                     {% for item in squadre_popolari %}
-                        <li>
-                            <strong>{{ item.squadra }}:</strong> <mark class="secondary">{{ item.conteggio }}</mark> maglie
+                        <li class="ranking-item">
+                            <div class="ranking-number"></div>
+                            <div class="ranking-content">
+                                <strong>{{ item.squadra }}</strong>
+                            </div>
+                            <div class="ranking-count">{{ item.conteggio }}</div>
                         </li>
                     {% endfor %}
                 </ol>
-            </section>
-
-            <hr>
-
-            <section>
-                <h2>Ripartizione per Stagione</h2>
-                <div class="grid">
+            </div>
+            
+            <div class="section-card">
+                <div class="section-title">
+                    <span style="font-size: 1.75rem;">📊</span>
+                    <h2>Per Stagione</h2>
+                </div>
+                <div class="season-grid">
                     {% for item in anni_stagione %}
-                        <div style="text-align: center; padding: 5px;">
-                            <mark class="secondary">{{ item.anno_stagione }}</mark> ({{ item.conteggio }})
+                        <div class="season-badge">
+                            <span class="season-year">{{ item.anno_stagione }}</span>
+                            <span class="season-count">{{ item.conteggio }} maglie</span>
                         </div>
                     {% endfor %}
                 </div>
-            </section>
-
+            </div>
         {% else %}
-            <p style="text-align: center; color: var(--pico-color-danger);">Aggiungi la tua prima maglia per vedere le statistiche!</p>
+            <div class="empty-state">
+                <div class="empty-state-icon">📦</div>
+                <h3>Nessuna Statistica Disponibile</h3>
+                <p>Aggiungi la tua prima maglia per vedere le statistiche!</p>
+                <a href="{% url 'aggiungi_maglia' %}" role="button" class="contrast" style="margin-top: 1rem;">
+                    Aggiungi Maglia
+                </a>
+            </div>
         {% endif %}
         
-    </article>
-
-    <footer style="text-align: center; margin-top: 30px;">
-        <a href="{% url 'dashboard' %}" role="button" class="secondary outline">Torna alla Dashboard</a>
-    </footer>
-
+        <div class="back-button" style="text-align: center;">
+            <a href="{% url 'dashboard' %}" role="button" class="secondary outline">
+                ← Torna alla Dashboard
+            </a>
+        </div>
+    </div>
 {% endblock %}
