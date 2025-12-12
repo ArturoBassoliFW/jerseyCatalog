@@ -10,10 +10,9 @@ def create_initial_superuser(apps, schema_editor):
     from django.contrib.auth import get_user_model
     User = get_user_model()
     
-    # 🚨🚨 PERSONALIZZA QUESTI VALORI 🚨🚨
-    USERNAME = 'IlTuoAdmin' 
-    EMAIL = 'la_tua_email@sicura.com'
-    PASSWORD = 'LaPasswordSegretaEForte' 
+    USERNAME = 'Admin' 
+    EMAIL = 'arturo.bassoli@freshways.it'
+    PASSWORD = 'GwR*dc1RF4FBg0&*AXG7' 
     
     # Verifica se l'utente esiste già per evitare errori su deploy successivi
     if not User.objects.filter(username=USERNAME).exists():
