@@ -159,7 +159,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Abilita la compressione e la cache per WhiteNoise (opzionale ma consigliato)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# Aggiungi questa riga per forzare WhiteNoise a leggere la cartella anche se sembra vuota
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 # Dove i file caricati dagli utenti vengono salvati sul server
 MEDIA_URL = '/media/'
