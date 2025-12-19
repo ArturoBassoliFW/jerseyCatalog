@@ -153,16 +153,19 @@ USE_TZ = True
 # STATIC & MEDIA FILES
 # ---------------------------------------------
 
-# Impostazione essenziale per la raccolta degli static files in produzione
+# Usa BASE_DIR (che è un oggetto Path) invece di os.path
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Abilita la compressione e la cache per WhiteNoise (opzionale ma consigliato)
+# Aggiungiamo un controllo: se la cartella esiste la usa, altrimenti non blocca il build
+STATIC_DIR = BASE_DIR / 'static'
+if STATIC_DIR.exists():
+    STATICFILES_DIRS = [STATIC_DIR]
+else:
+    STATICFILES_DIRS = []
+
+# Usa questa versione più semplice di WhiteNoise per ora
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# Aggiungi questa riga per forzare WhiteNoise a leggere la cartella anche se sembra vuota
-WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 # Dove i file caricati dagli utenti vengono salvati sul server
 MEDIA_URL = '/media/'
