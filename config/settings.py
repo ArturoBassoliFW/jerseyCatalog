@@ -160,12 +160,13 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # e a non interferire con gli statici di WhiteNoise
 CLOUDINARY_STORAGE_STATICFILES = False 
 
+# Specifica il percorso in modo assoluto
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    os.path.join(BASE_DIR, 'static'),
 ]
 
-# Usa WhiteNoise per gli statici
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Usa WhiteNoise semplice per evitare errori di Manifest mancanti
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media gestiti da Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
