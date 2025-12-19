@@ -155,7 +155,7 @@ USE_TZ = True
 
 # Impostazione essenziale per la raccolta degli static files in produzione
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Abilita la compressione e la cache per WhiteNoise (opzionale ma consigliato)
