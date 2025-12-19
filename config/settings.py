@@ -153,23 +153,24 @@ USE_TZ = True
 # STATIC & MEDIA FILES
 # ---------------------------------------------
 
-# Usa BASE_DIR (che è un oggetto Path) invece di os.path
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Aggiungiamo un controllo: se la cartella esiste la usa, altrimenti non blocca il build
-STATIC_DIR = BASE_DIR / 'static'
-if STATIC_DIR.exists():
-    STATICFILES_DIRS = [STATIC_DIR]
-else:
-    STATICFILES_DIRS = []
+# IMPORTANTE: Questa riga istruisce Django a usare Cloudinary SOLO per i media 
+# e a non interferire con gli statici di WhiteNoise
+CLOUDINARY_STORAGE_STATICFILES = False 
 
-# Usa questa versione più semplice di WhiteNoise per ora
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
-# Dove i file caricati dagli utenti vengono salvati sul server
+# Usa WhiteNoise per gli statici
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Media gestiti da Cloudinary
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # URL dove reindirizzare l'utente dopo il login
 # Creeremo questa view e questo template a breve
