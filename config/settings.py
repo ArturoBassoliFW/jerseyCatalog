@@ -153,12 +153,15 @@ USE_TZ = True
 # STATIC & MEDIA FILES
 # ---------------------------------------------
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) # cartella config
+PROJECT_ROOT = os.path.dirname(CURRENT_DIR) # cartella jerseyCatalog
+
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 
 # Proviamo a usare la stringa relativa se Path non sta funzionando bene su Render
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(PROJECT_ROOT, 'static'),
 ]
 
 # Usa questa versione di WhiteNoise (la più compatibile)
