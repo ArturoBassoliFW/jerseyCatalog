@@ -53,6 +53,9 @@ class Maglia(models.Model):
         null=True, 
         verbose_name="Informazioni Salienti (Funzione Plus)"
     )
+    
+    # 6. Timestamp
+    data_creazione = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Maglia Sportiva"

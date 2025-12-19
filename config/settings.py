@@ -29,10 +29,17 @@ DEBUG = os.environ.get('DEBUG') == '1' # DEBUG è False di default se non impost
 
 # Se siamo in DEBUG (locale), ALLOWED_HOSTS è vuoto. Altrimenti, usiamo quello di Render.
 if DEBUG:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ['*']
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
 else:
     # Per produzione (Render)
     ALLOWED_HOSTS = ['.onrender.com']
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
 
 
 # Application definition

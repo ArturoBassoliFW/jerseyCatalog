@@ -1,0 +1,45 @@
+<nav class="navbar">
+    <div class="navbar-content">
+        <a href="{% url 'vetrina_pubblica' %}" class="navbar-logo">Jersey Catalog</a>
+
+        <div class="navbar-menu">
+            <ul>
+                <li>
+                    <a href="{% url 'vetrina_pubblica' %}" {% if request.path == '/' or 'vetrina' in request.path %}class="active"{% endif %}>
+                        Vetrina Pubblica
+                    </a>
+                </li>
+                
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'dashboard' %}" {% if 'dashboard' in request.path %}class="active"{% endif %}>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'statistiche' %}" {% if 'statistiche' in request.path %}class="active"{% endif %}>
+                            Statistiche
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <div class="navbar-user-info">
+                {% if user.is_authenticated %}
+                    <strong>{{ user.username }}</strong>
+                    <form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="red">
+                            Esci
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" role="button" class="red">Accedi</a>
+                    <a href="{% url 'register' %}" role="button" class="btn-primary">Registrati</a>
+                {% endif %}
+            </div>
+            </div>
+
+        <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+    </div>
+</nav>

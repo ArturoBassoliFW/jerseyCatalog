@@ -25,5 +25,5 @@ urlpatterns = [
     path('maglia/<int:pk>/', views.dettaglio_maglia, name='dettaglio_maglia'),
     
     # Statistiche Collezione (privata)
-    path('statistiche/', views.statistiche_collezione, name='statistiche_collezione'),
+    path('statistiche/', views.statistiche, name='statistiche'),
 ]

@@ -1,224 +1,63 @@
 {% extends "base.html" %}
 {% block title %}{{ titolo_pagina }}{% endblock %}
+
 {% block content %}
-    <style>
-        .dashboard-header {
-            text-align: center;
-            padding: 2rem 0 3rem;
-            background: var(--brand-gradient);
-            margin: -2rem -1rem 2rem;
-            border-radius: 0 0 24px 24px;
-            color: white;
-        }
-
-        .dashboard-header h1 {
-            color: white;
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        .dashboard-stats {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1.5rem;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-        }
-
-        .action-bar {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .action-bar a {
-            background: var(--brand-gradient);
-            border: none;
-            padding: 0.875rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .action-bar a:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .section-header {
-            margin: 2rem 0 1.5rem;
-        }
-
-        .section-header h3 {
-            display: inline-block;
-            margin-right: 1rem;
-        }
-
-        .jersey-card {
-            border-radius: 16px;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .jersey-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-        }
-
-        .jersey-image-container {
-            position: relative;
-            width: 100%;
-            padding-top: 75%;
-            background: var(--pico-muted-border-color);
-            overflow: hidden;
-        }
-
-        .jersey-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .status-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-badge.public {
-            background: rgba(46, 213, 115, 0.9);
-            color: white;
-        }
-
-        .status-badge.private {
-            background: rgba(255, 71, 87, 0.9);
-            color: white;
-        }
-
-        .jersey-content {
-            padding: 1.25rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .jersey-title {
-            margin-bottom: 0.25rem;
-            font-size: 0.9rem;
-            color: var(--pico-muted-color);
-            font-weight: 500;
-        }
-
-        .jersey-player {
-            margin: 0 0 1rem;
-            font-size: 1.25rem;
-            font-weight: 700;
-        }
-
-        .jersey-actions {
-            margin-top: auto;
-            display: flex;
-            gap: 0.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--pico-muted-border-color);
-        }
-
-        .jersey-actions a {
-            flex: 1;
-            padding: 0.5rem;
-            text-align: center;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: var(--pico-card-background-color);
-            border-radius: 16px;
-            border: 2px dashed var(--pico-muted-border-color);
-        }
-
-        .empty-state h3 {
-            margin-bottom: 1rem;
-            opacity: 0.7;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-header {
-                margin: -2rem -1rem 1.5rem;
-                padding: 1.5rem 1rem 2rem;
-            }
-
-            .jersey-actions {
-                flex-direction: column;
-            }
-        }
-    </style>
-
     <div class="dashboard-header">
         <h1>👋 Ciao, {{ user.username }}!</h1>
         <div class="dashboard-stats">
             <strong>{{ maglie.count }}</strong> maglie nella tua collezione
         </div>
     </div>
-
+    
     <div class="action-bar">
         <a href="{% url 'aggiungi_maglia' %}" role="button">
             ➕ Aggiungi Nuova Maglia
         </a>
     </div>
-
+    
     <div class="section-header">
         <h3>La Tua Collezione</h3>
     </div>
-
+    
     {% if maglie %}
-        <div class="grid">
-            {% for maglia in maglie %}
-                <article class="jersey-card">
-                    <div class="jersey-image-container">
-                        {% if maglia.foto %}
-                            <img src="{{ maglia.foto.url }}" alt="{{ maglia.giocatore }}" class="jersey-image">
-                        {% endif %}
-                        <span class="status-badge {% if maglia.visibile_in_vetrina %}public{% else %}private{% endif %}">
-                            {% if maglia.visibile_in_vetrina %}🌐 Pubblica{% else %}🔒 Privata{% endif %}
-                        </span>
+    <div class="gallery-grid">
+        {% for maglia in maglie %}
+            <article class="jersey-showcase-card">
+                <div class="jersey-image-wrapper">
+                    {% if maglia.foto %}
+                        <img src="{{ maglia.foto.url }}" alt="{{ maglia.giocatore }}" class="jersey-image">
+                    {% else %}
+                        <div class="no-image-placeholder">👕</div>
+                    {% endif %}
+                    <span class="status-badge {% if maglia.visibile_in_vetrina %}public{% else %}private{% endif %}">
+                        {% if maglia.visibile_in_vetrina %}🌐 Pubblica{% else %}🔒 Privata{% endif %}
+                    </span>
+                </div>
+                <div class="jersey-info">
+                    <div class="jersey-team">{{ maglia.squadra }}</div>
+                    <h3 class="jersey-player">{{ maglia.giocatore }}</h3>
+                    <p class="jersey-season">Stagione {{ maglia.anno_stagione }}</p>
+                    
+                    <div class="jersey-actions">
+                        <a href="{% url 'dettaglio_maglia' maglia.pk %}" role="button" class="btn-action primary">👁️ Vedi</a>
+                        
+                        <a href="{% url 'modifica_maglia' pk=maglia.pk %}" role="button" class="btn-action secondary-fill">✏️ Modifica</a>
+                        
+                        <a href="{% url 'elimina_maglia' pk=maglia.pk %}" class="btn-action danger" aria-label="Elimina maglia">
+                            🗑️
+                        </a>
                     </div>
-                    <div class="jersey-content">
-                        <h5 class="jersey-title">{{ maglia.squadra }}</h5>
-                        <h4 class="jersey-player">{{ maglia.giocatore }}</h4>
-                        <p style="font-size: 0.9rem; color: var(--pico-muted-color); margin: 0;">
-                            Stagione {{ maglia.anno_stagione }}
-                        </p>
-                        <div class="jersey-actions">
-                            <a href="{% url 'dettaglio_maglia' maglia.pk %}" role="button" class="contrast outline">👁️ Vedi</a>
-                            <a href="{% url 'modifica_maglia' pk=maglia.pk %}" role="button" class="secondary outline">✏️ Modifica</a>
-                            <a href="{% url 'elimina_maglia' pk=maglia.pk %}" role="button" class="outline" style="color: var(--pico-color-danger); border-color: var(--pico-color-danger);">🗑️</a>
-                        </div>
-                    </div>
-                </article>
-            {% endfor %}
-        </div>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
     {% else %}
-        <div class="empty-state">
-            <h3>📦 La tua collezione è vuota</h3>
-            <p>Inizia ad aggiungere le tue maglie preferite!</p>
-            <a href="{% url 'aggiungi_maglia' %}" role="button" class="contrast" style="margin-top: 1rem;">
-                Aggiungi la Prima Maglia
-            </a>
-        </div>
+    <div class="empty-state">
+        <h3>📦 La tua collezione è vuota</h3>
+        <p>Inizia ad aggiungere le tue maglie preferite!</p>
+        <a href="{% url 'aggiungi_maglia' %}" role="button" class="contrast" style="margin-top: 1rem;">
+            Aggiungi la Prima Maglia
+        </a>
+    </div>
     {% endif %}
 {% endblock %}
