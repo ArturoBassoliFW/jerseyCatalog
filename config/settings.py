@@ -153,8 +153,14 @@ USE_TZ = True
 # STATIC & MEDIA FILES
 # ---------------------------------------------
 
+# Usa WhiteNoise semplice per evitare errori di Manifest mancanti
+STATICFILES_STORAGE = "whitenoise.storage.StaticFilesStorage"
+
+# 3. Forza la disattivazione totale del controllo cloudinary per gli statici
+CLOUDINARY_STORAGE_STATICFILES = False
+
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # IMPORTANTE: Questa riga istruisce Django a usare Cloudinary SOLO per i media 
 # e a non interferire con gli statici di WhiteNoise
@@ -164,9 +170,6 @@ CLOUDINARY_STORAGE_STATICFILES = False
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
-# Usa WhiteNoise semplice per evitare errori di Manifest mancanti
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media gestiti da Cloudinary
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
