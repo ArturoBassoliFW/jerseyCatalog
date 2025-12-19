@@ -50,8 +50,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
     'cloudinary',
     'catalogo',
 ]
@@ -153,24 +153,19 @@ USE_TZ = True
 # STATIC & MEDIA FILES
 # ---------------------------------------------
 
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__)) # cartella config
-PROJECT_ROOT = os.path.dirname(CURRENT_DIR) # cartella jerseyCatalog
-
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Proviamo a usare la stringa relativa se Path non sta funzionando bene su Render
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(BASE_DIR, 'static'),
 ]
 
-# Usa questa versione di WhiteNoise (la più compatibile)
+# Forza WhiteNoise a ignorare Cloudinary
 STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
-CLOUDINARY_STORAGE_STATICFILES = False
 
-# Media gestiti da Cloudinary
+# Media - Lasciali pure così, Cloudinary li gestirà correttamente
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-MEDIA_URL = '/media/'
+CLOUDINARY_STORAGE_STATICFILES = False
 
 # URL dove reindirizzare l'utente dopo il login
 # Creeremo questa view e questo template a breve
